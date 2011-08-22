@@ -725,14 +725,15 @@ func main() {
 	lastTime := sdl.GetTicks()
 
 	running := true
-	e := new(sdl.Event)
 	for running {
-		for e.Poll() {
-			switch e.Type {
-			case sdl.QUIT:
+		for ev := sdl.PollEvent(); ev != nil; ev = sdl.PollEvent() {
+			switch e := ev.(type) {
+			case *sdl.QuitEvent:
 				running = false
-			case sdl.KEYDOWN:
-				running = gs.HandleKey(e.Keyboard().Keysym.Sym)
+			case *sdl.KeyboardEvent:
+				if e.Type == sdl.KEYDOWN {
+					running = gs.HandleKey(e.Keysym.Sym)
+				}
 			}
 		}
 
